@@ -1,4 +1,5 @@
 import pymongo
+from pymongo import MongoClient
 #-------------------------------------------------------------------------------
 # Name:        SchoolGrades
 # Purpose:
@@ -9,6 +10,10 @@ import pymongo
 # Copyright:   (c) iestyn 2019
 # Licence:     MIT
 #-------------------------------------------------------------------------------
+
+cluster = MongoClient()
+db = cluster["school"]
+collection = db["students"]
 
 def loopPrintMenu():
     print("----= Menu Options =----")
@@ -27,7 +32,8 @@ def mainMenu(integerInput):
         return None
 
     if(integerInput==1):
-        searchStudent()
+        id = input("Enter student ID")
+        searchStudent(int(id))
     elif(integerInput==2):
         enterStudent()
     elif(integerInput==3):
@@ -40,8 +46,11 @@ def mainMenu(integerInput):
     else:
         print("Please Enter the correct option")
 
-def searchStudent():
-    print("Search Student")
+def searchStudent(id):
+    results = collection.find({"_id":id})
+    for result in results:
+        print(result)
+
 
 def enterStudent():
     print("Enter new student details")
@@ -57,3 +66,5 @@ while(True):
     loopPrintMenu()
     loopInput = input()
     mainMenu(loopInput)
+
+
