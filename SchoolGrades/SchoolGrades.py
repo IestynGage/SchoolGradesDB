@@ -2,7 +2,7 @@ import pymongo
 from pymongo import MongoClient
 #-------------------------------------------------------------------------------
 # Name:        SchoolGrades
-# Purpose:
+# Purpose:     To have a command line menu that can interact with MongoDB
 #
 # Author:      iestyn
 #
@@ -11,7 +11,7 @@ from pymongo import MongoClient
 # Licence:     MIT
 #-------------------------------------------------------------------------------
 
-cluster = MongoClient()
+cluster = MongoClient("mongodb+srv://user:123@cluster0-inbbm.mongodb.net/test?retryWrites=true&w=majority")
 db = cluster["school"]
 collection = db["students"]
 
@@ -51,16 +51,20 @@ def searchStudent(id):
     for result in results:
         print(result)
 
-
 def enterStudent():
-    print("Enter new student details")
+    FName = input("Please enter students First Name")
+    LName = input("Please enter students Last Name")
+    student = {"FName":FName,"LName":LName}
+
+    collection.insert_one(student)
 
 def enterGrades():
     print("Enter student grades")
 
 def deleteStudent():
-    print("Enter studentID to be deleted")
-
+    studentID = input("Please enter students ID to be deleted")
+    deleteQuery = {"_id":studentID}
+    collection.delete_one(deleteQuery)
 
 while(True):
     loopPrintMenu()
