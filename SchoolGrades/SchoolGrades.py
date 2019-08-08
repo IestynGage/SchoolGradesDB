@@ -11,7 +11,7 @@ from pymongo import MongoClient
 # Licence:     MIT
 #-------------------------------------------------------------------------------
 
-cluster = MongoClient("mongodb+srv://user:123@cluster0-inbbm.mongodb.net/test?retryWrites=true&w=majority")
+cluster = MongoClient()
 db = cluster["school"]
 collection = db["students"]
 
@@ -22,7 +22,8 @@ def loopPrintMenu():
     print("2. Enter a new student details")
     print("3. Enter grades for student")
     print("4. delete a student")
-    print("5. Exit Program")
+    print("5. print all students")
+    print("6. Exit Program")
 
 def mainMenu(integerInput):
     try:
@@ -41,6 +42,8 @@ def mainMenu(integerInput):
     elif(integerInput==4):
         deleteStudent()
     elif(integerInput==5):
+        printAllStudents()
+    elif(integerInput==6):
         print("Exiting Program")
         quit()
     else:
@@ -54,17 +57,30 @@ def searchStudent(id):
 def enterStudent():
     FName = input("Please enter students First Name")
     LName = input("Please enter students Last Name")
-    student = {"FName":FName,"LName":LName}
+    student = {"_id":collection.count()+1,"FName":FName,"LName":LName}
 
     collection.insert_one(student)
 
 def enterGrades():
-    print("Enter student grades")
+    studentID = input("Please Enter students ID")
+    subject = input("Please enter students subject")
+    grade = input("Please enter students grade for " + subject)
+
+    query = {"_id":int(studentID)}
+    newValue = { "$set": {subject : grade}}
+
+    collection.update_one(query,newValue)
 
 def deleteStudent():
     studentID = input("Please enter students ID to be deleted")
-    deleteQuery = {"_id":studentID}
-    collection.delete_one(deleteQuery)
+    deleteQuery = {"_id":int(studentID)}
+    x = collection.delete_one(deleteQuery)
+    print(x.deleted_count, "documents deleted.")
+
+def printAllStudents():
+    results = collection.find()
+    for result in results:
+        print(result)
 
 while(True):
     loopPrintMenu()
