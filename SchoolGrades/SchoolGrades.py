@@ -16,6 +16,9 @@ db = cluster["school"]
 collection = db["students"]
 
 def loopPrintMenu():
+    '''
+    This prints all the options thar are possible
+    '''
     print("----= Menu Options =----")
     print("Enter the number for option you want")
     print("1. Search for a Student")
@@ -26,31 +29,31 @@ def loopPrintMenu():
     print("6. Exit Program")
 
 def mainMenu(integerInput):
+    '''
+    This takes input and calls function to said integer
+    '''
     try:
         integerInput = int(integerInput)
     except ValueError:
         print("Please Enter the correct option")
         return None
 
-    if(integerInput==1):
-        id = input("Enter student ID")
-        searchStudent(int(id))
-    elif(integerInput==2):
-        enterStudent()
-    elif(integerInput==3):
-        enterGrades()
-    elif(integerInput==4):
-        deleteStudent()
-    elif(integerInput==5):
-        printAllStudents()
-    elif(integerInput==6):
-        print("Exiting Program")
-        quit()
-    else:
-        print("Please Enter the correct option")
+    switcher = {
+        1:searchStudent,
+        2:enterStudent,
+        3:enterGrades,
+        4:deleteStudent,
+        5:printAllStudents,
+        6:quitprogram
+    }
 
-def searchStudent(id):
-    results = collection.find({"_id":id})
+    function = switcher.get(integerInput,lambda: print("Please Enter the correct option"))
+
+    function()
+
+def searchStudent():
+    id = input("Enter student ID")
+    results = collection.find({"_id":int(id)})
     for result in results:
         print(result)
 
@@ -81,6 +84,10 @@ def printAllStudents():
     results = collection.find()
     for result in results:
         print(result)
+
+def quitprogram():
+    print("Exiting Program")
+    quit()
 
 while(True):
     loopPrintMenu()
